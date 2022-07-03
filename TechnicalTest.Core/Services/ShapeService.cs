@@ -7,19 +7,67 @@ namespace TechnicalTest.Core.Services
     {
         public Shape ProcessTriangle(Grid grid, GridValue gridValue)
         {
-            // TODO: Calculate the coordinates.
-            return new Shape(new List<Coordinate>
+            int x1, y1, x2, y2;
+
+            if (gridValue.Column % 2 == 0)
             {
-                new(0, 0),
-                new(0, 0),
-                new(0, 0)
-            });
+                // Calculate Right Triangle and return Shape with coordinates.
+                x2 = (((gridValue.Column / 2) - 1) * grid.Size);
+                y1 = (gridValue.GetNumericRow() - 1) * grid.Size;
+                x1 = x2 + grid.Size;
+                y2 = y1 + grid.Size;
+
+                // Return Shape with coordinates
+                return new Shape(new List<Coordinate>
+                {
+                    new(x2, y1),
+                    new(x1, y1),
+                    new(x1, y2)
+
+                });
+            }
+            else
+            {
+                // Calculate Left Triangle and return Shape with coordinates
+                x1 = ((gridValue.Column - 1) * grid.Size) / 2;
+                x2 = x1 + grid.Size;
+                y1 = gridValue.GetNumericRow() * grid.Size;
+                y2 = (gridValue.GetNumericRow() - 1) * grid.Size;
+
+                // Return Shape with coordinates
+                return new Shape(new List<Coordinate>
+                {
+                    new(x1, y2),
+                    new(x1, y1),
+                    new(x2, y1)
+
+                }); 
+            }
         }
 
         public GridValue ProcessGridValueFromTriangularShape(Grid grid, Triangle triangle)
         {
-            // TODO: Calculate the grid value.
-            return new GridValue(0, 0);
+            // Get vertices from Triangle
+            var left = triangle.TopLeftVertex;
+            var outer = triangle.OuterVertex;
+            var right = triangle.BottomRightVertex;
+
+            // Calculate grid row
+            var row = outer.Y / grid.Size;
+            if (left.Y == outer.Y)
+            {
+                row++;
+            }
+            
+            // Calculate grid column
+            var column = (outer.X / grid.Size) * 2;
+            if (left.X == outer.X)
+            {
+                column++;
+            }
+            
+            // Return GridValue
+            return new GridValue(row, column);
         }
     }
 }
